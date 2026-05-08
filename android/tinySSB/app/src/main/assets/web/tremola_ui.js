@@ -7,7 +7,7 @@ var overlayIsActive = false;
 var display_or_not = [
     'div:qr', 'div:back', 'core', 'plus',
     'lst:chats', 'lst:prod', 'lst:games', 'lst:contacts', 'lst:members',
-    'div:posts', 'lst:kanban', 'div:board',
+    'div:posts', 'lst:kanban', 'div:board', 'div:board', 'div:map',
     'div:footer', 'div:textarea', 'div:confirm-members', 'div:settings',
     'div:tictactoe_list', 'div:tictactoe_board'
 ];
@@ -26,6 +26,7 @@ var scenarioDisplay = {
     'settings': ['div:back', 'core', 'div:settings'],
     'kanban': ['div:back', 'core', 'lst:kanban', 'plus'], // KANBAN
     'board': ['div:back', 'core', 'div:board'], // KANBAN
+    'map': ['div:back', 'core', 'div:map'], // MAP
     'tictactoe-list': ['div:back', 'core', 'div:tictactoe_list', 'plus'],
     'tictactoe-board': ['div:back', 'core', 'div:tictactoe_board'],
 }
@@ -72,6 +73,10 @@ var scenarioMenu = {
         ['(un)Forget', 'board_toggle_forget'],
         ['Debug', 'ui_debug']],
 
+    'map': [
+        ['Settings', 'menu_settings'],
+        ['About', 'menu_about']],
+
     'tictactoe-list': [
         ['Settings', 'menu_settings'],
         ['About', 'menu_about']],
@@ -107,7 +112,7 @@ function onBackPressed() {
         setScenario(prev_scenario)
     else if (['productivity', 'games', 'contacts'].indexOf(curr_scenario) >= 0)
         setScenario('chats')
-    else if (['kanban'].indexOf(curr_scenario) >= 0) {
+    else if (['kanban', 'map'].indexOf(curr_scenario) >= 0) {
         setScenario('productivity')
         prev_scenario = 'chats'
     } else if (curr_scenario == 'posts')
@@ -120,7 +125,7 @@ function onBackPressed() {
         setScenario('tictactoe-list')
 }
 
-function setScenario(s) {
+    function setScenario(s) {
     // console.log('setScenario ' + s)
     closeOverlay();
     var lst = scenarioDisplay[s];
@@ -184,7 +189,7 @@ function setScenario(s) {
             c.innerHTML = `<font size=+2><strong>${t}</strong></font>`;
         }
 
-        if (['board','kanban'].indexOf(s) >= 0) // a specific Kanban board: use all space (beyond the footer)
+        if (['board','kanban','map'].indexOf(s) >= 0) // a specific Kanban board: use all space (beyond the footer)
             document.getElementById('core').style.height = 'calc(100% - 45pt)';
         else
             document.getElementById('core').style.height = 'calc(100% - 110pt)';
@@ -209,6 +214,15 @@ function setScenario(s) {
                 menu_create_personal_board()
             }
         }
+
+        if (s == 'map') {
+                document.getElementById("tremolaTitle").style.display = 'none';
+                var c = document.getElementById("conversationTitle");
+                c.style.display = null;
+                c.innerHTML = "<font size=+1><strong>Map</strong></font>";
+                map_init("div:map");
+                map_on_panel_show();
+            }
 
         if (s == 'posts') {
           setTimeout(function () { // let image rendering (fetching size) take place before we scroll

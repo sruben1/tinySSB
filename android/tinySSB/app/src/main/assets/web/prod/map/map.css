@@ -1,0 +1,224 @@
+/*
+    prod/map/map.css
+
+    Styles for the MapLibre map component.
+    Uses the same CSS variables defined in tremola.css so it
+    automatically adapts to light / dark themes.
+*/
+
+/* ------------------------------------------------------------------ */
+/*  Panel shell                                                        */
+/* ------------------------------------------------------------------ */
+
+.map-panel {
+    display:        flex;
+    flex-direction: column;
+    position:       absolute;
+    top:    0;
+    left:   0;
+    width:  100%;
+    height: 100%;
+    z-index: 500;
+    background-color: var(--neutralCol);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Header bar                                                         */
+/* ------------------------------------------------------------------ */
+
+.map-header {
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    height:          48px;
+    min-height:      48px;
+    padding:         0 8px;
+    background-color: var(--passiveCol);
+    color:           var(--fontCol);
+    z-index:         510;
+}
+
+.map-title {
+    font-size:   large;
+    font-weight: 600;
+    flex:        1;
+    text-align:  center;
+    color:       var(--fontCol);
+}
+
+.map-back-btn,
+.map-menu-btn {
+    width:       40px;
+    height:      40px;
+    font-size:   x-large;
+    background:  transparent;
+    border:      none;
+    color:       var(--fontCol);
+    cursor:      pointer;
+    border-radius: 50%;
+    display:     flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.map-back-btn:active,
+.map-menu-btn:active {
+    background-color: var(--activeCol);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Map canvas container                                               */
+/* ------------------------------------------------------------------ */
+
+.map-container {
+    flex:     1;            /* fills remaining height below the header */
+    width:    100%;
+    position: relative;
+    overflow: hidden;
+}
+
+/* MapLibre injects its canvas here; ensure it fills the div */
+.map-container .maplibregl-canvas-container,
+.map-container .maplibregl-canvas {
+    width:  100% !important;
+    height: 100% !important;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Floating action button stack (bottom-left)                        */
+/* ------------------------------------------------------------------ */
+
+.map-fab-stack {
+    position: absolute;
+    bottom:   80px;       /* above the MapLibre attribution bar */
+    left:     12px;
+    display:  flex;
+    flex-direction: column;
+    gap:      8px;
+    z-index:  520;
+}
+
+.map-fab {
+    width:        46px;
+    height:       46px;
+    border-radius: 50%;
+    border:       1px solid var(--strokeCol);
+    background-color: var(--menuBackground);
+    color:        var(--fontCol);
+    font-size:    20px;
+    cursor:       pointer;
+    display:      flex;
+    align-items:  center;
+    justify-content: center;
+    box-shadow:   0 2px 8px rgba(0,0,0,0.45);
+    transition:   background-color 0.15s;
+}
+
+.map-fab:active {
+    background-color: var(--activeCol);
+}
+
+/* Highlighted state when geolocation is active */
+.map-fab-active {
+    background-color: var(--passiveCol);
+    color:            #fff;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Dropdown menu overlay                                              */
+/* ------------------------------------------------------------------ */
+
+.map-menu-overlay {
+    position:   absolute;
+    right:      10px;
+    top:        58px;      /* just below the header */
+    background: var(--menuBackground);
+    padding:    0.4em 0;
+    z-index:    10002;
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    min-width:  200px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Custom markers                                                     */
+/* ------------------------------------------------------------------ */
+
+/* "My position" blue pulsing dot */
+.map-my-location-dot {
+    width:        18px;
+    height:       18px;
+    border-radius: 50%;
+    background-color: #2979ff;
+    border:       3px solid #fff;
+    box-shadow:   0 0 0 2px #2979ff;
+    animation:    map-pulse 1.8s ease-out infinite;
+}
+
+@keyframes map-pulse {
+    0%   { box-shadow: 0 0 0 0   rgba(41,121,255,0.6); }
+    70%  { box-shadow: 0 0 0 12px rgba(41,121,255,0); }
+    100% { box-shadow: 0 0 0 0   rgba(41,121,255,0); }
+}
+
+/* Peer markers */
+.map-peer-marker {
+    width:        22px;
+    height:       22px;
+    border-radius: 50%;
+    border:       2px solid #fff;
+    cursor:       pointer;
+    box-shadow:   0 2px 6px rgba(0,0,0,0.5);
+    transition:   transform 0.15s;
+}
+
+.map-peer-marker:hover {
+    transform: scale(1.25);
+}
+
+/* Popup card */
+.map-popup {
+    font-family: "Helvetica Neue", sans-serif;
+    font-size:   14px;
+    color:       #222;
+    max-width:   180px;
+}
+
+.map-popup strong {
+    display:       block;
+    margin-bottom: 4px;
+    font-size:     15px;
+}
+
+.map-popup p {
+    margin:    0;
+    font-size: 13px;
+    color:     #555;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Toast                                                              */
+/* ------------------------------------------------------------------ */
+
+.map-toast {
+    position:  absolute;
+    bottom:    30px;
+    left:      50%;
+    transform: translateX(-50%);
+    background-color: var(--neutralCol);
+    color:     var(--fontCol);
+    padding:   10px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    z-index:   10003;
+    opacity:   0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.map-toast-show {
+    opacity: 1;
+}
+
+/* eof */
