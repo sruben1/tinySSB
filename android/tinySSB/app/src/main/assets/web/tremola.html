@@ -7,6 +7,8 @@
   <!-- link rel="stylesheet" type="text/css" href="games/dpi24-06-battleship/duel.css" media="screen" / -->
   <!-- link rel="stylesheet" type="text/css" href="games/dpi24-09-connect4/connect4.css" media="screen" / -->
   <link rel="stylesheet" type="text/css" href="prod/kanban/kanban.css" media="screen" />
+  <link rel="stylesheet" href="util/maplibre-gl.css">
+  <link rel="stylesheet" href="prod/map/map.css">
   <!-- link rel="stylesheet" type="text/css" href="prod/dpi24-14-sched/scheduling.css" media="screen" / -->
   <!-- link rel="stylesheet" type="text/css" href="prod/dpi24-15-kahoot/kahoot.css" media="screen" / -->
   <script type="text/javascript" charset="UTF-8" src="util/bipf.js"></script>
@@ -25,6 +27,11 @@
   <!-- script type="text/javascript" charset="UTF-8" src="prod/dpi24-15-kahoot/jakob_kahoot_ui.js"></script -->
   <script type="text/javascript" charset="UTF-8" src="prod/kanban/board.js"></script>
   <script type="text/javascript" charset="UTF-8" src="prod/kanban/board_ui.js"></script>
+  <!-- MapLibre GL JS (bundled locally) -->
+  <script src="util/maplibre-gl.js"></script>
+  <!-- Map component -->
+  <script src="prod/map/map.js"></script>
+  <script src="prod/map/map_ui.js"></script>
   <script type="text/javascript" charset="UTF-8" src="games/games.js"></script>
   <script type="text/javascript" charset="UTF-8" src="games/tictactoe/ttt.js"></script>
   <!-- script type="text/javascript" charset="UTF-8" src="games/dpi24-06-battleship/duel.js"></script -->
@@ -122,6 +129,7 @@
     </div>
 
     <div id='lst:kanban' class='w100 coreScroll' style="display: none;"></div>
+    <div id='div:map' style="display: none; height: 100%; width: 100%;"></div>
 
     <div id='kanban-create-personal-board-overlay' class='qr-overlay'>
       <div style="display:flex; justify-content: center;align-items: center; flex-direction: column; gap: 20px">

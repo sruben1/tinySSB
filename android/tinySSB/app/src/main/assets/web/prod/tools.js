@@ -6,6 +6,8 @@ function load_prod_list() {
     document.getElementById("lst:prod").innerHTML = '';
     load_prod_item('Kanban', 'prod/kanban/kanban.svg', 'setScenario("kanban")',
                    'Collaboratively visualize your work items and give participants a view of progress and process, from start to finish.<br><em>Author: Jannick Heisch</em>');
+    load_prod_item('Map', 'prod/map/map.svg', 'setScenario("map")',
+                       'Map component feature (in development)');
     load_prod_item('Event Scheduler (dpi24.14)', 'prod/dpi24-14-sched/schedule.svg', null /* 'setScenario("scheduling")' */,
                    'Collaboratively find suitable dates by collecting availability of participants.<br><em>Authors: Sascha Schumacher and Jasra Mohamed Yoosuf</em>');
     load_prod_item('Kahoot Quiz (dpi24.15)', 'prod/dpi24-15-kahoot/quiz.svg', null /* 'setScenario("kahoot")' */,

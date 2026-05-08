@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Background circle matching other app icons in tremola -->
+  <circle cx="50" cy="50" r="48" fill="#51a4d2"/>
+
+  <!-- Simplified map pin / location marker -->
+  <path d="M50 18
+           C38 18 28 28 28 40
+           C28 55 50 82 50 82
+           C50 82 72 55 72 40
+           C72 28 62 18 50 18 Z"
+        fill="white" stroke="white" stroke-width="1"/>
+
+  <!-- Inner dot of the pin -->
+  <circle cx="50" cy="40" r="9" fill="#51a4d2"/>
+</svg>

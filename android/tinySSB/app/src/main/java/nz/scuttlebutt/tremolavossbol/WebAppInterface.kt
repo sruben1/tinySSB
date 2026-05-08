@@ -356,6 +356,38 @@ class WebAppInterface(val act: MainActivity, val webView: WebView) {
                 }
             }
 
+            // ── MAP ──────────────────────────────────────────────────────────
+            // map:pins:save <base64(json)>
+            // Writes the full pins JSON blob to filesDir/map_pins.json.
+            // Called by map.js whenever a pin is added, edited, or deleted.
+            "map:pins:save" -> {
+                val json = android.util.Base64.decode(args[1], android.util.Base64.NO_WRAP).decodeToString()
+                java.io.File(act.filesDir, "map_pins.json").writeText(json)
+                Log.d("map", "pins saved (${json.length} chars)")
+            }
+
+            // map:pins:load
+            // Reads filesDir/map_pins.json and sends it back to the frontend
+            // via the JS callback map_on_pins_loaded(json).
+            "map:pins:load" -> {
+                val f = java.io.File(act.filesDir, "map_pins.json")
+                val json = if (f.exists()) f.readText() else "[]"
+                eval("map_on_pins_loaded('${android.util.Base64.encodeToString(json.toByteArray(), android.util.Base64.NO_WRAP)}')")
+            }
+
+            // map:mbtiles:check
+            // Tells the frontend whether an MBTiles file is present in filesDir.
+            // Frontend calls this at init to decide whether to use offline tiles.
+            "map:mbtiles:check" -> {
+                //val exists = java.io.File(act.filesDir, "map.mbtiles").exists()
+                val documentsDir = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOCUMENTS)
+                val file = java.io.File(documentsDir, "SocialMap/map.mbtiles")
+                val exists = file.exists()
+                Log.d("SocialMap", "Mbtile File exists in Documents?: $exists")
+                eval("map_on_mbtiles_status($exists)")
+            }
+            // ── END MAP ───────────────────────────────────────────────────────
+
             else -> {
                 Log.d("onFrontendRequest", "unknown")
             }

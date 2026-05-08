@@ -127,6 +127,7 @@ class MainActivity : Activity() {
         val webView = findViewById<WebView>(R.id.webView)
         val assetLoader = WebViewAssetLoader.Builder()
             .addPathHandler("/assets/", AssetsPathHandler(this))
+            .addPathHandler("/mbtiles/", MbTilesPathHandler(this))
             .build()
         webView.webViewClient = object : WebViewClientCompat() {
             override fun shouldInterceptRequest(
@@ -147,6 +148,14 @@ class MainActivity : Activity() {
                 null
             ) // disable acceleration, needed for older WebViews
         }
+
+//        // Software rendering was only needed for very old WebView versions.
+//        // Forcing it on all pre-P devices kills WebGL (and thus MapLibre).
+//        // Hardware acceleration is stable from API 21+, so only fall back
+//        // to software for anything older than Lollipop.
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+//            webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+//        }
 
         wai = WebAppInterface(this, webView)
         // upgrades repo filesystem if necessary
@@ -269,6 +278,14 @@ class MainActivity : Activity() {
         t5.priority = 8
         t6.priority = 8
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!android.os.Environment.isExternalStorageManager()) {
+                val intent = Intent(android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                intent.data = Uri.parse("package:" + applicationContext.packageName)
+                startActivity(intent)
+            }
+        }
+
         scheduleWorker(this)
 
     }
@@ -340,28 +357,28 @@ class MainActivity : Activity() {
                 else -> "qr_scan_success('" + result.contents + "');"
             }
             wai.eval(cmd)
-        /* disabled in tinyTremola
-        }  else if (requestCode == 1001 && resultCode == RESULT_OK) { // media pick
-            val pictureUri = data?.data
-            val bitmap = when {
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.P /* 28 */ ->
-                    MediaStore.Images.Media.getBitmap(this.contentResolver, pictureUri)
-                else -> @RequiresApi(Build.VERSION_CODES.P) {
-                    val src = ImageDecoder.createSource(this.contentResolver, pictureUri!!)
-                    ImageDecoder.decodeBitmap(src)
+            /* disabled in tinyTremola
+            }  else if (requestCode == 1001 && resultCode == RESULT_OK) { // media pick
+                val pictureUri = data?.data
+                val bitmap = when {
+                    Build.VERSION.SDK_INT < Build.VERSION_CODES.P /* 28 */ ->
+                        MediaStore.Images.Media.getBitmap(this.contentResolver, pictureUri)
+                    else -> @RequiresApi(Build.VERSION_CODES.P) {
+                        val src = ImageDecoder.createSource(this.contentResolver, pictureUri!!)
+                        ImageDecoder.decodeBitmap(src)
+                    }
                 }
-            }
-            val ref = tremolaState.blobStore.storeAsBlob(bitmap)
-            tremolaState.wai.eval("b2f_new_image_blob('${ref}')")
-        } else if (requestCode == 1002 && resultCode == RESULT_OK) { // camera
-            val ref = tremolaState.blobStore.storeAsBlob(currentPhotoPath)
-            tremolaState.wai.eval("b2f_new_image_blob('${ref}')")
-        */
-        /* no file loading in tinyTremola
-        } else if (requestCode == 808 && resultCode == RESULT_OK) { // voice
-            val voice = "abc" // result!!.contents
-            tremolaState.wai.eval("b2f_new_voice('${voice}')")
-        */
+                val ref = tremolaState.blobStore.storeAsBlob(bitmap)
+                tremolaState.wai.eval("b2f_new_image_blob('${ref}')")
+            } else if (requestCode == 1002 && resultCode == RESULT_OK) { // camera
+                val ref = tremolaState.blobStore.storeAsBlob(currentPhotoPath)
+                tremolaState.wai.eval("b2f_new_image_blob('${ref}')")
+            */
+            /* no file loading in tinyTremola
+            } else if (requestCode == 808 && resultCode == RESULT_OK) { // voice
+                val voice = "abc" // result!!.contents
+                tremolaState.wai.eval("b2f_new_voice('${voice}')")
+            */
         }  else if (requestCode == 555 && resultCode == RESULT_OK) { // enable fine grained location
             ble?.startBluetooth()
         }
