@@ -223,7 +223,7 @@ function setScenario(s) {
             document.getElementById("tremolaTitle").style.display = 'none';
             var c = document.getElementById("conversationTitle");
             c.style.display = null;
-            c.innerHTML = `<font size=+1><strong>Social Map</strong></font>`;
+            c.innerHTML = `<font size=+1><strong>SocialMap</strong></font>`;
             // defer init slightly to prevent possible issues when loading everything
             setTimeout(map_init, 60);
         }
