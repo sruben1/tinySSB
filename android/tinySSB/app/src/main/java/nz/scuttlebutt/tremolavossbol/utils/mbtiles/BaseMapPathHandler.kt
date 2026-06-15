@@ -12,49 +12,65 @@ import java.util.zip.GZIPInputStream
 class BaseMapPathHandler(private val context: Context) : PathHandler {
 
     companion object {
-        private const val TAG      = "MbTilesPathHandler"
-        private const val BASE_MAP_DB_NAME  = "map.mbtiles"
-        private const val MIME_PBF = "application/x-protobuf"
+        private const val TAG      = "BaseMapPathHandler"; // Just for logging
+        private const val MIME_PBF = "application/x-protobuf";
+        private const val LOCAL_FILES_BASE_DB_PATH   = "SocialMap/baseMap.mbtiles";
+        private const val BUNDLED_BASE_MAP_DB = "web/prod/map/baseMap.mbtiles";
 
-        // Gzip magic bytes
-        private val GZIP_MAGIC = byteArrayOf(0x1f.toByte(), 0x8b.toByte())
+        // Gzip magic bytes:
+        private val GZIP_MAGIC = byteArrayOf(0x1f.toByte(), 0x8b.toByte());
+        // Valid tile query pattern:
+        private val tileRegex = Regex("""^(\d+)/(\d+)/(\d+)\.pbf$""")
     }
-/*
+
+
+
     // Lazy-open the database; null if the file does not exist yet.
     private val db: SQLiteDatabase? by lazy {
 
-        val f = File(context.filesDir, "SocialMap/$BASE_MAP_DB_NAME")
+        val appScopeDbFile = File(context.filesDir, LOCAL_FILES_BASE_DB_PATH);
 
-        if (!f.exists()) {
-            if ( true /*TODO check file avail in ASSETS, copy if yes, otherwise give error...*/ ){}
-            Log.w(TAG, "$BASE_MAP_DB_NAME not found in filesDir – offline tiles unavailable")
-            null
-        } else {
+        // Copy from bundled assets file logic
+        if (!appScopeDbFile.exists()) {
+            appScopeDbFile.parentFile?.mkdirs();
+            Log.i(TAG, "Copying base map from apk (assets/$BUNDLED_BASE_MAP_DB).");
+
             try {
-                SQLiteDatabase.openDatabase(
-                    f.absolutePath,
-                    null,
-                    SQLiteDatabase.OPEN_READONLY
-                ).also {
-                    Log.i(TAG, "Opened $BASE_MAP_DB_NAME")
-                    it.execSQL("PRAGMA cache_size = 2000") // (optional optimizations)
-                    it.execSQL("PRAGMA temp_store = MEMORY")
+                context.assets.open(BUNDLED_BASE_MAP_DB).use { input ->
+                    appScopeDbFile.outputStream().use { output ->
+                        input.copyTo(output, bufferSize = 64 * 1024);
+                    }
                 }
+                Log.i(TAG, "Base map copied (${appScopeDbFile.length()} bytes)")
             } catch (e: Exception) {
-                Log.e(TAG, "Failed to open $BASE_MAP_DB_NAME: ${e.message}")
-                null
+                appScopeDbFile.delete()   // remove partial write; next launch will retry
+                Log.e(TAG, "Failed to copy base map: ${e.message}")
             }
+        }
+
+        // Copy logic
+        try {
+            SQLiteDatabase.openDatabase(
+                appScopeDbFile.absolutePath,
+                null,
+                SQLiteDatabase.OPEN_READONLY
+            ).also {
+                Log.i(TAG, "Opened $LOCAL_FILES_BASE_DB_PATH")
+                it.execSQL("PRAGMA cache_size = 2000") // (optional optimizations)
+                it.execSQL("PRAGMA temp_store = MEMORY")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to open $LOCAL_FILES_BASE_DB_PATH: ${e.message}")
+            null
         }
     }
 
-    private val tileRegex = Regex("""^(\d+)/(\d+)/(\d+)\.pbf$""")
-*/
     /**
      * Called by WebViewAssetLoader for every request under /mbtiles/ parent path.
      * @param path The actual query postfix of each request e.g. "14/8066/5777.pbf"
      */
     override fun handle(path: String): WebResourceResponse? {
-        /*val match = tileRegex.matchEntire(path.trimStart('/')) ?: return null
+        val match = tileRegex.matchEntire(path.trimStart('/')) ?: return null
         val (z, x, yXyz) = match.destructured.toList().map { it.toInt() }
 
         // Important: Convert to TMS (flipped y) as used by MBtiles (MapLibre uses XYZ)
@@ -81,13 +97,14 @@ class BaseMapPathHandler(private val context: Context) : PathHandler {
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error reading tile z=$z x=$x y=$yXyz (tms=$yTms): ${e.message}")
-            null
-        }*/
-        return null
+            return null
+        }
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
 
+    //==========
+    // Utilities
+    //==========
     private fun isGzipped(data: ByteArray): Boolean =
         data.size >= 2 &&
                 data[0] == GZIP_MAGIC[0] &&

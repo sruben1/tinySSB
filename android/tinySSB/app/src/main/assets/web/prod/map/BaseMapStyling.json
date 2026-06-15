@@ -86,7 +86,17 @@
       "source-layer": "urban_areas",
       "minzoom": 4,
       "paint": {
-        "fill-color": "#d4c9b8",
+        "fill-color": [
+          "interpolate",
+          ["exponential", 0.5],
+          ["zoom"],
+          6,
+          "#f5e642",
+          8,
+          "#1ce89d",
+          12,
+          "#b200e3"
+        ],
         "fill-opacity": 0.7
       }
     },
@@ -96,13 +106,11 @@
       "type": "symbol",
       "source": "natural_earth",
       "source-layer": "populated_places",
-      "minzoom": 2,
       "layout": {
         "text-field": ["get", "NAME"],
         "text-font": ["Open Sans Regular"],
-        "text-size": ["interpolate", ["linear"], ["zoom"], 2, 8, 6, 11, 10, 13],
+        "text-size": ["interpolate", ["linear"], ["zoom"], 1, 2, 3, 8, 10, 17],
         "text-anchor": "bottom",
-        "text-offset": [0, -0.3],
         "icon-allow-overlap": false,
         "text-allow-overlap": false
       },

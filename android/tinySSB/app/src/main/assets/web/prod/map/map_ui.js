@@ -33,20 +33,24 @@ function map_init() {
     }
 }
 
-function _map_create(containerId, useMbtiles) {
+function _map_create() {
     map_instance = new maplibregl.Map({
         container: "div:social-map",
         style: "https://appassets.androidplatform.net/assets/web/prod/map/BaseMapStyling.json",
         center: MAP_DEFAULT_CENTER,
         zoom: MAP_DEFAULT_ZOOM,
-        attributionControl: false
+        attributionControl: false,
+        renderWorldCopies: false
     });
 
     map_instance.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
     map_instance.addControl(new maplibregl.NavigationControl({ showCompass: true }), "top-right");
     map_instance.addControl(new maplibregl.ScaleControl({ maxWidth: 100, unit: "metric" }), "bottom-left");
 
-    map_ready = true;
+    // Once map loads, set to true...
+    map_instance.on('load', () => { map_ready = true; });
+
+    _map_setup_longpress();
 }
 
 function map_destroy() {

@@ -1,0 +1,6 @@
+#div\:social-map {
+    position: relative;  /* already set inline, but make it explicit */
+    width: 100%;
+    height: 100%;        /* must fill #core */
+    overflow: hidden;
+}
