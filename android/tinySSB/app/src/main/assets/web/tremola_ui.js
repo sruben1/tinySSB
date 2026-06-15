@@ -8,6 +8,7 @@ var display_or_not = [
     'div:qr', 'div:back', 'core', 'plus',
     'lst:chats', 'lst:prod', 'lst:games', 'lst:contacts', 'lst:members',
     'div:posts', 'lst:kanban', 'div:board',
+    'div:social-map',
     'div:footer', 'div:textarea', 'div:confirm-members', 'div:settings',
     'div:tictactoe_list', 'div:tictactoe_board'
 ];
@@ -26,6 +27,7 @@ var scenarioDisplay = {
     'settings': ['div:back', 'core', 'div:settings'],
     'kanban': ['div:back', 'core', 'lst:kanban', 'plus'], // KANBAN
     'board': ['div:back', 'core', 'div:board'], // KANBAN
+    'socialmap' : ['div:back', 'core', 'div:social-map'],
     'tictactoe-list': ['div:back', 'core', 'div:tictactoe_list', 'plus'],
     'tictactoe-board': ['div:back', 'core', 'div:tictactoe_board'],
 }
@@ -72,6 +74,14 @@ var scenarioMenu = {
         ['(un)Forget', 'board_toggle_forget'],
         ['Debug', 'ui_debug']],
 
+    'socialmap': [
+        ['Settings', 'menu_settings'],
+        ['About', 'menu_about'],
+        ['Synchronize Pins', 'sync_pins'],
+        ['Share A Map', 'share_map_menu'],
+        ['Receive A Map', 'receive_map_dialog'], // To be determined if this is needed
+        ['Load A Map', 'load_map']],
+
     'tictactoe-list': [
         ['Settings', 'menu_settings'],
         ['About', 'menu_about']],
@@ -107,7 +117,7 @@ function onBackPressed() {
         setScenario(prev_scenario)
     else if (['productivity', 'games', 'contacts'].indexOf(curr_scenario) >= 0)
         setScenario('chats')
-    else if (['kanban'].indexOf(curr_scenario) >= 0) {
+    else if (['kanban', 'socialmap'].indexOf(curr_scenario) >= 0) {
         setScenario('productivity')
         prev_scenario = 'chats'
     } else if (curr_scenario == 'posts')
@@ -184,7 +194,7 @@ function setScenario(s) {
             c.innerHTML = `<font size=+2><strong>${t}</strong></font>`;
         }
 
-        if (['board','kanban'].indexOf(s) >= 0) // a specific Kanban board: use all space (beyond the footer)
+        if (['board','kanban', 'socialmap'].indexOf(s) >= 0) // a specific Kanban board: use all space (beyond the footer)
             document.getElementById('core').style.height = 'calc(100% - 45pt)';
         else
             document.getElementById('core').style.height = 'calc(100% - 110pt)';
@@ -209,7 +219,14 @@ function setScenario(s) {
                 menu_create_personal_board()
             }
         }
-
+        if (s == 'socialmap') {
+            document.getElementById("tremolaTitle").style.display = 'none';
+            var c = document.getElementById("conversationTitle");
+            c.style.display = null;
+            c.innerHTML = `<font size=+1><strong>Social Map</strong></font>`;
+            // defer init slightly to prevent possible issues when loading everything
+            setTimeout(map_init, 60);
+        }
         if (s == 'posts') {
           setTimeout(function () { // let image rendering (fetching size) take place before we scroll
               let c = document.getElementById('core');

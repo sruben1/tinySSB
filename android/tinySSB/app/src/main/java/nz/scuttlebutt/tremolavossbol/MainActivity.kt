@@ -46,6 +46,7 @@ import nz.scuttlebutt.tremolavossbol.tssb.WebsocketIO
 import nz.scuttlebutt.tremolavossbol.tssb.ble.BlePeers
 import nz.scuttlebutt.tremolavossbol.tssb.ble.BluetoothEventListener
 import nz.scuttlebutt.tremolavossbol.utils.Constants
+import nz.scuttlebutt.tremolavossbol.utils.mbtiles.BaseMapPathHandler
 import org.json.JSONObject
 import tremolavossbol.R
 import java.io.File
@@ -127,6 +128,7 @@ class MainActivity : Activity() {
         val webView = findViewById<WebView>(R.id.webView)
         val assetLoader = WebViewAssetLoader.Builder()
             .addPathHandler("/assets/", AssetsPathHandler(this))
+            .addPathHandler("/mbtiles/", BaseMapPathHandler(this))
             .build()
         webView.webViewClient = object : WebViewClientCompat() {
             override fun shouldInterceptRequest(
