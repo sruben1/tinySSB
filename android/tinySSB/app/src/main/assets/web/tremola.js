@@ -357,6 +357,8 @@ function backend(cmdStr) { // send this to Kotlin (or simulate in case of browse
         // console.log('e=', JSON.stringify(e))
         b2f_new_event(e)
         console.log(e)
+    } else if (cmdStr[0] == 'map') {
+         console.log('backend', JSON.stringify(cmdStr))
     } else {
         // console.log('backend', JSON.stringify(cmdStr))
     }

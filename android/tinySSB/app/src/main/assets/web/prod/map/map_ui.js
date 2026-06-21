@@ -9,6 +9,7 @@ var MAP_DEFAULT_ZOOM   = 10;
 
 var _map_state = {centre: MAP_DEFAULT_CENTER, zoom: MAP_DEFAULT_ZOOM};
 
+var pin_list = []
 //===========================
 // INIT/MANAGEMENT PROCEDURES
 //===========================
@@ -71,24 +72,49 @@ function map_refresh_resize() {
 // ADVANCED FUNCTIONALITY (POI-pins etc.)
 //=======================================
 
+function Pin(pin_id,pin_marker,pin_title,pin_comment){
+    this.pin_id = pin_id;
+    this.pin_marker = pin_marker;
+    this.pin_title = pin_title;
+    this.pin_comment = pin_comment
+}
+
 function _pin_id() {
     return Math.random().toString(36).slice(2, 9);
 }
+
+const pin_details = new maplibregl.Popup({offset:25}).setText(
+    'Pin Details to be implemented'
+);
 
 /**
  * Add a new pin at lon/lat with title and comment. Prompts the user
  * to input these in an overlay dialog.
  */
 function map_add_pin(lon, lat) {
-    //TODO
-    launch_snackbar(`Adding pins will be added soon... lat:${lat.toString()}, lon:${lon.toString()}`);
+    var _press_timer = null;
+    const pin_marker = new maplibregl.Marker()
+        .setLngLat([lon,lat])
+        .addTo(map_instance)
+        .setPopup(pin_details)
+        .on("touchstart", function (e) {
+            //TODO: Implement function to delete marker?? This here is just never getting called
+            if (e.originalEvent.touches.length !== 1) return;
+            _press_timer = setTimeout(function () {
+                var t = e.originalEvent.changedTouches[0];
+                pin_marker.remove();
+                }, 300);
+        });
+    //TODO: Add text input for title and content to specialice popup
+    var pin_id = _pin_id()
+    pin_list.push(new Pin(pin_id,pin_marker,"Test Pin",pin_id))
+    launch_snackbar(`Pin Coordinates: lat:${lat.toString()}, lon:${lon.toString()}`)
 }
 
 
 function _map_setup_longpress() {
     if (!map_instance) return;
     var _press_timer = null;
-
     map_instance.on("mousedown", function (e) {
         _press_timer = setTimeout(function () {
             map_add_pin(e.lngLat.lng, e.lngLat.lat);
