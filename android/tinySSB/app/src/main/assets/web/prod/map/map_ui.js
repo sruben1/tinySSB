@@ -127,7 +127,11 @@ function _map_setup_longpress() {
         if (e.originalEvent.touches.length !== 1) return;
         _press_timer = setTimeout(function () {
             var t = e.originalEvent.changedTouches[0];
-            var pt = map_instance.unproject([t.clientX, t.clientY]);
+            var rect = map_instance.getCanvas().getBoundingClientRect();
+            var pt = map_instance.unproject([
+                t.clientX - rect.left,
+                t.clientY - rect.top
+            ]);
             map_add_pin(pt.lng, pt.lat);
         }, 600);
     });
